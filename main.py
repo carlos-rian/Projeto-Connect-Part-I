@@ -9,6 +9,7 @@ db = SQLAlchemy(app)
 
 ####################################################
 
+# criando o banco de dados dos Funcionários
 class Funcionarios(db.Model):
     id_funcionario = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
@@ -17,6 +18,7 @@ class Funcionarios(db.Model):
     def __repr__ (self):
         return str(self.id_funcionario) + " " +  str(self.name) + " " + str(self.email)
 
+# criando o banco de dados dos Clientes
 class Clientes(db.Model):
     id_cliente = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
@@ -25,6 +27,7 @@ class Clientes(db.Model):
     def __repr__(self):
         return str(self.name) + " " + str(self.email)
 
+# criando o banco de dados dos Equipamentos
 class Equipamentos(db.Model):
     id_equipamento = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
@@ -35,6 +38,7 @@ class Equipamentos(db.Model):
 
 ####################################################
 
+# função responsável pela criação dos funcionários
 def create_funcionario(name, email):
 
     #admin = User(username='Adalto', email='adalto@example.com')
@@ -46,6 +50,7 @@ def create_funcionario(name, email):
     db.session.commit()
     db.session.close()
 
+# função responsável pela criação dos clientes
 def create_cliente(name, email):
     teste = Clientes(name=name, email=email)
 
@@ -53,6 +58,7 @@ def create_cliente(name, email):
     db.session.commit()
     db.session.close()
 
+# função responsável pela criação dos equipamentos
 def create_equipamento(name, codigo):
     teste = Equipamentos(name=name, codigo=codigo)
 
@@ -60,16 +66,19 @@ def create_equipamento(name, codigo):
     db.session.commit()
     db.session.close()
 
+# função responsável por deletar os clientes
 def delete_cliente(id):
     Clientes.query.filter(Clientes.id_cliente == f'{id}').delete()
     db.session.commit()
     db.session.close()
 
+# função responsável por deletar os funcionários
 def delete_funcionario(id):
     Funcionarios.query.filter(Funcionarios.id_funcionario == f'{id}').delete()
     db.session.commit()
     db.session.close()
 
+# função responsável por deletar os equipamentos
 def delete_equipamento(id):
     Equipamentos.query.filter(Equipamentos.id_equipamento == f'{id}').delete()
     db.session.commit()
@@ -77,36 +86,40 @@ def delete_equipamento(id):
 
 ####################################################
 
+#rota para a página inicial
 @app.route('/')
 def main():
     return render_template('index.html')
 
-@app.route('/funcionarios', methods=["GET", "POST"])
-@app.route('/funcionarios')
-def funcionarios():
+#rota para a página de cadastro dos funcionários
+@app.route('/cadastrarfuncionarios', methods=["GET", "POST"])
+@app.route('/cadastrarfuncionarios')
+def cadastrar_funcionarios():
     if request.method == 'POST':
         name = request.form.get("nome")
         email = request.form.get("email")
         create_funcionario(name=name, email=email)
-    return render_template('funcionarios.html')
+    return render_template('cadastrarfuncionarios.html')
 
-@app.route('/clientes', methods=["GET", "POST"])
-@app.route('/clientes')
-def clientes():
+#rota para a página de cadastro dos clientes
+@app.route('/cadastrarclientes', methods=["GET", "POST"])
+@app.route('/cadastrarclientes')
+def cadastrar_clientes():
     if request.method == 'POST':
         name = request.form.get("nome")
         email = request.form.get("email")
         create_cliente(name=name, email=email)
-    return render_template('clientes.html')
+    return render_template('cadastrarclientes.html')
 
-@app.route('/equipamentos', methods=["GET", "POST"])
-@app.route('/equipamentos')
-def equipamentos():
+#rota para a página de cadastro dos equipamentos
+@app.route('/cadastrarequipamentos', methods=["GET", "POST"])
+@app.route('/cadastrarequipamentos')
+def cadastrar_equipamentos():
     if request.method == 'POST':
         name = request.form.get("nome")
         codigo = request.form.get("codigo")
         create_equipamento(name=name, codigo=codigo)
-    return render_template('equipamentos.html')
+    return render_template('cadastrarequipamentos.html')
 
 ####################################################
 
@@ -135,7 +148,6 @@ def deletar_clientes():
         id = request.form.get("id")
         delete_cliente(id)
     return render_template('deleteclientes.html')
-
 
 @app.route('/deletefuncionarios', methods=["GET", "POST"])
 @app.route('/deletefuncionarios')
