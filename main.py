@@ -41,9 +41,6 @@ class Equipamentos(db.Model):
 # função responsável pela criação dos funcionários
 def create_funcionario(name, email):
 
-    #admin = User(username='Adalto', email='adalto@example.com')
-    #guest = User(username='João', email='joao@example.com')
-
     teste = Funcionarios(name=name, email=email)
 
     db.session.add(teste)
@@ -86,6 +83,29 @@ def delete_equipamento(id):
 
 ####################################################
 
+def atualizar_clientes(id, nome, email):
+    cliente = Clientes.query.filter_by(id_cliente=f'{id}').first()
+    cliente.email = email
+    cliente.name = nome
+    db.session.commit()
+    db.session.close()
+
+def atualizar_equipamentos(id, nome, codigo):
+    equipamento = Equipamentos.query.filter_by(id_equipamento=f'{id}').first()
+    equipamento.codigo = codigo
+    equipamento.name = nome
+    db.session.commit()
+    db.session.close()
+
+def atualizar_funcionarios(id, nome, email):
+    funcionario = Funcionarios.query.filter_by(id_funcionario=f'{id}').first()
+    funcionario.email = email
+    funcionario.name = nome
+    db.session.commit()
+    db.session.close()
+
+####################################################
+
 #rota para a página inicial
 @app.route('/')
 def main():
@@ -93,7 +113,6 @@ def main():
 
 #rota para a página de cadastro dos funcionários
 @app.route('/cadastrarfuncionarios', methods=["GET", "POST"])
-@app.route('/cadastrarfuncionarios')
 def cadastrar_funcionarios():
     if request.method == 'POST':
         name = request.form.get("nome")
@@ -103,7 +122,6 @@ def cadastrar_funcionarios():
 
 #rota para a página de cadastro dos clientes
 @app.route('/cadastrarclientes', methods=["GET", "POST"])
-@app.route('/cadastrarclientes')
 def cadastrar_clientes():
     if request.method == 'POST':
         name = request.form.get("nome")
@@ -113,7 +131,6 @@ def cadastrar_clientes():
 
 #rota para a página de cadastro dos equipamentos
 @app.route('/cadastrarequipamentos', methods=["GET", "POST"])
-@app.route('/cadastrarequipamentos')
 def cadastrar_equipamentos():
     if request.method == 'POST':
         name = request.form.get("nome")
@@ -141,8 +158,8 @@ def consulta_clientes():
 
 ####################################################
 
+
 @app.route('/deleteclientes', methods=["GET", "POST"])
-@app.route('/deleteclientes')
 def deletar_clientes():
     if request.method == 'POST':
         id = request.form.get("id")
@@ -150,7 +167,6 @@ def deletar_clientes():
     return render_template('deleteclientes.html')
 
 @app.route('/deletefuncionarios', methods=["GET", "POST"])
-@app.route('/deletefuncionarios')
 def deletar_funcionarios():
     if request.method == 'POST':
         id = request.form.get("id")
@@ -158,7 +174,6 @@ def deletar_funcionarios():
     return render_template('deletefuncionarios.html')
 
 @app.route('/deleteequipamento', methods=["GET", "POST"])
-@app.route('/deleteequipamento')
 def deletar_equipamentos():
     if request.method == 'POST':
         id = request.form.get("id")
@@ -166,6 +181,36 @@ def deletar_equipamentos():
     return render_template('deleteequipamentos.html')
 
 ####################################################
+
+@app.route('/atualizarclientes', methods=["GET", "POST"])
+def atualizar_cliente():
+    if request.method == 'POST':
+        id = request.form.get("id")
+        nome = request.form.get("nome")
+        email = request.form.get("email")
+        atualizar_clientes(id, nome, email)
+    return render_template('atualizarclientes.html')
+
+@app.route('/atualizarequipamentos', methods=["GET", "POST"])
+def atualizar_equipamento():
+    if request.method == 'POST':
+        id = request.form.get("id")
+        nome = request.form.get("nome")
+        codigo = request.form.get("codigo")
+        atualizar_equipamentos(id, nome, codigo)
+    return render_template('atualizarequipamentos.html')
+
+@app.route('/atualizarfuncionarios', methods=["GET", "POST"])
+def atualizar_funcionario():
+    if request.method == 'POST':
+        id = request.form.get("id")
+        nome = request.form.get("nome")
+        email = request.form.get("email")
+        atualizar_funcionarios(id, nome, email)
+    return render_template('atualizarfuncionarios.html')
+
+####################################################
+
 
 if __name__ =="__main__":
 	db.create_all()
