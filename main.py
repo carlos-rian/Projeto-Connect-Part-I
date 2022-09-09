@@ -13,10 +13,8 @@ class Funcionarios(db.Model):
     email = db.Column(db.String(120), nullable=False)
     senha = db.Column(db.String(12), nullable=False)
 
-    def create_funcionario(name, email, senha):
-        funcionario = Funcionarios(name=name, email=email, senha=senha)
-
-        db.session.add(funcionario)
+    def create_funcionario(self):
+        db.session.add(self)
         db.session.commit()
         db.session.close()
     
@@ -99,8 +97,12 @@ def cadastrar_funcionarios():
     name = request.form.get("nome")
     email = request.form.get("email")
     senha = request.form.get("senha")
-    Funcionarios.create_funcionario(name=name, email=email, senha=senha)
-    funcionarios = Funcionarios.query.all()
+    # class instance 
+    db = Funcionarios(name=name, email=email, senha=senha)
+    # crio o registro no banco
+    db.create_funcionario()
+    # busco todos os registros
+    funcionarios = db.query.all()
     return render_template('consultafuncionarios.html', funcionarios=funcionarios)
 
 # ok
