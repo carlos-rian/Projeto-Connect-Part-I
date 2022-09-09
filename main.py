@@ -102,31 +102,47 @@ def atualizar_funcionarios(id, nome, email):
 def main():
     return render_template('index.html')
 
-@app.route('/cadastrarfuncionarios', methods=["GET", "POST"])
-def cadastrar_funcionarios():
-    if request.method == 'POST':
-        name = request.form.get("nome")
-        email = request.form.get("email")
-        senha = request.form.get("senha")
-        create_funcionario(name=name, email=email, senha=senha)
+# ok
+@app.route('/cadastrarfuncionarios')
+def get_funcionarios():
     return render_template('cadastrarfuncionarios.html')
 
-@app.route('/cadastrarclientes', methods=["GET", "POST"])
-def cadastrar_clientes():
-    if request.method == 'POST':
-        name = request.form.get("nome")
-        email = request.form.get("email")
-        create_cliente(name=name, email=email)
+# ok
+@app.route('/cadastrarfuncionarios', methods=["POST"])
+def cadastrar_funcionarios():
+    name = request.form.get("nome")
+    email = request.form.get("email")
+    senha = request.form.get("senha")
+    create_funcionario(name=name, email=email, senha=senha)
+    funcionarios = Funcionarios.query.all()
+    return render_template('consultafuncionarios.html', funcionarios=funcionarios)
+
+# ok
+@app.route('/cadastrarclientes')
+def get_clientes():
     return render_template('cadastrarclientes.html')
 
-@app.route('/cadastrarequipamentos', methods=["GET", "POST"])
-def cadastrar_equipamentos():
-    if request.method == 'POST':
-        name = request.form.get("nome")
-        codigo = request.form.get("codigo")
-        qtde = request.form.get("qtde")
-        create_equipamento(name=name, codigo=codigo, qtde=qtde)
+# ok
+@app.route('/cadastrarclientes', methods=["POST"])
+def cadastrar_clientes():
+    name = request.form.get("nome")
+    email = request.form.get("email")
+    create_cliente(name=name, email=email)
+    clientes = Clientes.query.all()
+    return render_template('consultaclientes.html', clientes=clientes)
+
+@app.route('/cadastrarequipamentos')
+def get_equipamentos():
     return render_template('cadastrarequipamentos.html')
+
+@app.route('/cadastrarequipamentos', methods=["POST"])
+def cadastrar_equipamentos():
+    name = request.form.get("nome")
+    codigo = request.form.get("codigo")
+    qtde = request.form.get("qtde")
+    create_equipamento(name=name, codigo=codigo, qtde=qtde)
+    equipamentos = Equipamentos.query.all()
+    return render_template('consultaequipamentos.html', equipamentos=equipamentos)
 
 ####################################################
 
