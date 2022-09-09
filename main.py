@@ -198,33 +198,45 @@ def deletar_equipamentos():
 
 ####################################################
 
-@app.route('/atualizarclientes', methods=["GET", "POST"])
-def atualizar_cliente():
-    if request.method == 'POST':
-        id = request.form.get("id")
-        nome = request.form.get("nome")
-        email = request.form.get("email")
-        atualizar_clientes(id, nome, email)
+@app.route('/atualizarclientes')
+def get_atualizar_cliente():
     return render_template('atualizarclientes.html')
+
+@app.route('/atualizarclientes', methods=["POST"])
+def atualizar_cliente():
+    id = request.form.get("id")
+    nome = request.form.get("nome")
+    email = request.form.get("email")
+    atualizar_clientes(id, nome, email)
+    clientes = Clientes.query.all()
+    return render_template('consultaclientes.html', clientes=clientes)
+
+@app.route('/atualizarequipamentos')
+def get_atualizar_equipamento():
+    return render_template('atualizarequipamentos.html')
 
 @app.route('/atualizarequipamentos', methods=["GET", "POST"])
 def atualizar_equipamento():
-    if request.method == 'POST':
-        id = request.form.get("id")
-        nome = request.form.get("nome")
-        codigo = request.form.get("codigo") 
-        qtde = request.form.get("qtde")
-        atualizar_equipamentos(id, nome, codigo, qtde)
-    return render_template('atualizarequipamentos.html')
+    id = request.form.get("id")
+    nome = request.form.get("nome")
+    codigo = request.form.get("codigo") 
+    qtde = request.form.get("qtde")
+    atualizar_equipamentos(id, nome, codigo, qtde)
+    equipamentos = Equipamentos.query.all()
+    return render_template('consultaequipamentos.html', equipamentos=equipamentos)
+
+@app.route('/atualizarfuncionarios')
+def get_atualizar_funcionario():
+    return render_template('atualizarfuncionarios.html')
 
 @app.route('/atualizarfuncionarios', methods=["GET", "POST"])
 def atualizar_funcionario():
-    if request.method == 'POST':
-        id = request.form.get("id")
-        nome = request.form.get("nome")
-        email = request.form.get("email")
-        atualizar_funcionarios(id, nome, email)
-    return render_template('atualizarfuncionarios.html')
+    id = request.form.get("id")
+    nome = request.form.get("nome")
+    email = request.form.get("email")
+    atualizar_funcionarios(id, nome, email)
+    funcionarios = Funcionarios.query.all()
+    return render_template('consultafuncionarios.html', funcionarios=funcionarios)
 
 ####################################################
 
