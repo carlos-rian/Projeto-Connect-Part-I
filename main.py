@@ -3,11 +3,9 @@ from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///banco.sqlite3'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///dados.sqlite3'
 
 db = SQLAlchemy(app)
-
-####################################################
 
 class Funcionarios(db.Model):
     id_funcionario = db.Column(db.Integer, primary_key=True)
@@ -15,88 +13,76 @@ class Funcionarios(db.Model):
     email = db.Column(db.String(120), nullable=False)
     senha = db.Column(db.String(12), nullable=False)
 
-    def __repr__ (self):
-        return str(self.id_funcionario) + " " +  str(self.name) + " " + str(self.email) + str(self.senha)
+    def create_funcionario(name, email, senha):
+        funcionario = Funcionarios(name=name, email=email, senha=senha)
+
+        db.session.add(funcionario)
+        db.session.commit()
+        db.session.close()
+    
+    def atualizar_funcionarios(id, nome, email):
+        funcionario = Funcionarios.query.filter_by(id_funcionario=f'{id}').first()
+        funcionario.email = email
+        funcionario.name = nome
+        db.session.commit()
+        db.session.close()
+
+    def delete_funcionario(id):
+        Funcionarios.query.filter(Funcionarios.id_funcionario == f'{id}').delete()
+        db.session.commit()
+        db.session.close()
 
 class Clientes(db.Model):
     id_cliente = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(120), nullable=False)
 
-    def __repr__(self):
-        return str(self.name) + " " + str(self.email)
+    def create_cliente(name, email):
+        cliente = Clientes(name=name, email=email)
+
+        db.session.add(cliente)
+        db.session.commit()
+        db.session.close()
+
+    def atualizar_clientes(id, nome, email):
+        cliente = Clientes.query.filter_by(id_cliente=f'{id}').first()
+        cliente.email = email
+        cliente.name = nome
+        db.session.commit()
+        db.session.close()
+
+    def delete_cliente(id):
+        Clientes.query.filter(Clientes.id_cliente == f'{id}').delete()
+        db.session.commit()
+        db.session.close()
+
 
 class Equipamentos(db.Model):
     id_equipamento = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
-    codigo = db.Column(db.String(120), nullable=False)
+    codigo = db.Column(db.Integer, nullable=False)
     qtde = db.Column(db.Integer, nullable=False)
 
-    def __repr__(self):
-        return str(self.name) + " " + str(self.codigo)
+    def create_equipamento(name, codigo, qtde):
+        equipamento = Equipamentos(name=name, codigo=codigo, qtde=qtde)
 
-####################################################
+        db.session.add(equipamento)
+        db.session.commit()
+        db.session.close()
 
-def create_funcionario(name, email, senha):
+    def delete_equipamento(id):
+        Equipamentos.query.filter(Equipamentos.id_equipamento == f'{id}').delete()
+        db.session.commit()
+        db.session.close()
 
-    teste = Funcionarios(name=name, email=email, senha=senha)
+    def atualizar_equipamentos(id, nome, codigo, qtde):
+        equipamento = Equipamentos.query.filter_by(id_equipamento=f'{id}').first()
+        equipamento.codigo = codigo
+        equipamento.name = nome
+        equipamento.qtde = qtde
+        db.session.commit()
+        db.session.close()
 
-    db.session.add(teste)
-    db.session.commit()
-    db.session.close()
-
-def create_cliente(name, email):
-    teste = Clientes(name=name, email=email)
-
-    db.session.add(teste)
-    db.session.commit()
-    db.session.close()
-
-def create_equipamento(name, codigo, qtde):
-    teste = Equipamentos(name=name, codigo=codigo, qtde=qtde)
-
-    db.session.add(teste)
-    db.session.commit()
-    db.session.close()
-
-def delete_cliente(id):
-    Clientes.query.filter(Clientes.id_cliente == f'{id}').delete()
-    db.session.commit()
-    db.session.close()
-
-def delete_funcionario(id):
-    Funcionarios.query.filter(Funcionarios.id_funcionario == f'{id}').delete()
-    db.session.commit()
-    db.session.close()
-
-def delete_equipamento(id):
-    Equipamentos.query.filter(Equipamentos.id_equipamento == f'{id}').delete()
-    db.session.commit()
-    db.session.close()
-
-def atualizar_clientes(id, nome, email):
-    cliente = Clientes.query.filter_by(id_cliente=f'{id}').first()
-    cliente.email = email
-    cliente.name = nome
-    db.session.commit()
-    db.session.close()
-
-def atualizar_equipamentos(id, nome, codigo, qtde):
-    equipamento = Equipamentos.query.filter_by(id_equipamento=f'{id}').first()
-    equipamento.codigo = codigo
-    equipamento.name = nome
-    equipamento.qtde = qtde
-    db.session.commit()
-    db.session.close()
-
-def atualizar_funcionarios(id, nome, email):
-    funcionario = Funcionarios.query.filter_by(id_funcionario=f'{id}').first()
-    funcionario.email = email
-    funcionario.name = nome
-    db.session.commit()
-    db.session.close()
-
-####################################################
 
 @app.route('/')
 def main():
@@ -113,7 +99,7 @@ def cadastrar_funcionarios():
     name = request.form.get("nome")
     email = request.form.get("email")
     senha = request.form.get("senha")
-    create_funcionario(name=name, email=email, senha=senha)
+    Funcionarios.create_funcionario(name=name, email=email, senha=senha)
     funcionarios = Funcionarios.query.all()
     return render_template('consultafuncionarios.html', funcionarios=funcionarios)
 
@@ -127,7 +113,7 @@ def get_clientes():
 def cadastrar_clientes():
     name = request.form.get("nome")
     email = request.form.get("email")
-    create_cliente(name=name, email=email)
+    Clientes.create_cliente(name=name, email=email)
     clientes = Clientes.query.all()
     return render_template('consultaclientes.html', clientes=clientes)
 
@@ -140,11 +126,9 @@ def cadastrar_equipamentos():
     name = request.form.get("nome")
     codigo = request.form.get("codigo")
     qtde = request.form.get("qtde")
-    create_equipamento(name=name, codigo=codigo, qtde=qtde)
+    Equipamentos.create_equipamento(name=name, codigo=codigo, qtde=qtde)
     equipamentos = Equipamentos.query.all()
     return render_template('consultaequipamentos.html', equipamentos=equipamentos)
-
-####################################################
 
 @app.route('/consultaequipamentos')
 def consulta_equipamentos():
@@ -161,8 +145,6 @@ def consulta_clientes():
     clientes = Clientes.query.all()
     return render_template('consultaclientes.html', clientes=clientes)
 
-####################################################
-
 @app.route('/deleteclientes')
 def get_deletar_clientes():
     return render_template('deleteclientes.html')
@@ -170,7 +152,7 @@ def get_deletar_clientes():
 @app.route('/deleteclientes', methods=["POST"])
 def deletar_clientes():
     id = request.form.get("id")
-    delete_cliente(id)
+    Clientes.delete_cliente(id)
     clientes = Clientes.query.all()
     return render_template('consultaclientes.html', clientes=clientes)
 
@@ -181,7 +163,7 @@ def get_deletar_funcionarios():
 @app.route('/deletefuncionarios', methods=["POST"])
 def deletar_funcionarios():
     id = request.form.get("id")
-    delete_funcionario(id)
+    Funcionarios.delete_funcionario(id)
     funcionarios = Funcionarios.query.all()
     return render_template('consultafuncionarios.html', funcionarios=funcionarios)
 
@@ -192,11 +174,10 @@ def get_deletar_equipamentos():
 @app.route('/deleteequipamento', methods=["POST"])
 def deletar_equipamentos():
     id = request.form.get("id")
-    delete_equipamento(id)
+    Equipamentos.delete_equipamento(id)
     equipamentos = Equipamentos.query.all()
     return render_template('consultaequipamentos.html', equipamentos=equipamentos)
 
-####################################################
 
 @app.route('/atualizarclientes')
 def get_atualizar_cliente():
@@ -207,7 +188,7 @@ def atualizar_cliente():
     id = request.form.get("id")
     nome = request.form.get("nome")
     email = request.form.get("email")
-    atualizar_clientes(id, nome, email)
+    Clientes.atualizar_clientes(id, nome, email)
     clientes = Clientes.query.all()
     return render_template('consultaclientes.html', clientes=clientes)
 
@@ -221,7 +202,7 @@ def atualizar_equipamento():
     nome = request.form.get("nome")
     codigo = request.form.get("codigo") 
     qtde = request.form.get("qtde")
-    atualizar_equipamentos(id, nome, codigo, qtde)
+    Equipamentos.atualizar_equipamentos(id, nome, codigo, qtde)
     equipamentos = Equipamentos.query.all()
     return render_template('consultaequipamentos.html', equipamentos=equipamentos)
 
@@ -234,11 +215,9 @@ def atualizar_funcionario():
     id = request.form.get("id")
     nome = request.form.get("nome")
     email = request.form.get("email")
-    atualizar_funcionarios(id, nome, email)
+    Funcionarios.atualizar_funcionarios(id, nome, email)
     funcionarios = Funcionarios.query.all()
     return render_template('consultafuncionarios.html', funcionarios=funcionarios)
-
-####################################################
 
 if __name__ =="__main__":
 	db.create_all()
