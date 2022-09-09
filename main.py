@@ -163,26 +163,38 @@ def consulta_clientes():
 
 ####################################################
 
-@app.route('/deleteclientes', methods=["GET", "POST"])
-def deletar_clientes():
-    if request.method == 'POST':
-        id = request.form.get("id")
-        delete_cliente(id)
+@app.route('/deleteclientes')
+def get_deletar_clientes():
     return render_template('deleteclientes.html')
 
-@app.route('/deletefuncionarios', methods=["GET", "POST"])
-def deletar_funcionarios():
-    if request.method == 'POST':
-        id = request.form.get("id")
-        delete_funcionario(id)
+@app.route('/deleteclientes', methods=["POST"])
+def deletar_clientes():
+    id = request.form.get("id")
+    delete_cliente(id)
+    clientes = Clientes.query.all()
+    return render_template('consultaclientes.html', clientes=clientes)
+
+@app.route('/deletefuncionarios')
+def get_deletar_funcionarios():
     return render_template('deletefuncionarios.html')
 
-@app.route('/deleteequipamento', methods=["GET", "POST"])
-def deletar_equipamentos():
-    if request.method == 'POST':
-        id = request.form.get("id")
-        delete_equipamento(id)
+@app.route('/deletefuncionarios', methods=["POST"])
+def deletar_funcionarios():
+    id = request.form.get("id")
+    delete_funcionario(id)
+    funcionarios = Funcionarios.query.all()
+    return render_template('consultafuncionarios.html', funcionarios=funcionarios)
+
+@app.route('/deleteequipamento')
+def get_deletar_equipamentos():
     return render_template('deleteequipamentos.html')
+
+@app.route('/deleteequipamento', methods=["POST"])
+def deletar_equipamentos():
+    id = request.form.get("id")
+    delete_equipamento(id)
+    equipamentos = Equipamentos.query.all()
+    return render_template('consultaequipamentos.html', equipamentos=equipamentos)
 
 ####################################################
 
